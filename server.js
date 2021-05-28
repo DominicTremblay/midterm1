@@ -14,8 +14,11 @@ const morgan     = require('morgan');
 const { Pool } = require('pg');
 const dbParams = require('./lib/db.js');
 const db = new Pool(dbParams);
-db.connect();
 
+db.connect();
+const dbHelpers = require('./helpers/dbHelpers')(db);
+
+console.log(dbHelpers);
 // Load the logger first so all (static) HTTP requests are logged to STDOUT
 // 'dev' = Concise output colored by response status for development use.
 //         The :status token will be colored red for server error codes, yellow for client error codes, cyan for redirection codes, and uncolored for all other codes.
@@ -35,13 +38,13 @@ app.use(express.static("public"));
 // Note: Feel free to replace the example routes below with your own
 const usersRoutes = require("./routes/users");
 const widgetsRoutes = require("./routes/widgets");
-const mapsRoutes = require('./routes/map');
+// const mapsRoutes = require('./routes/map');
 
 // Mount all resource routes
 // Note: Feel free to replace the example routes below with your own
-app.use("/api/users", usersRoutes(db));
-app.use("/api/widgets", widgetsRoutes(db));
-app.use("/api/maps", mapsRoutes(db));
+app.use("/api/users", usersRoutes(dbHelpers));
+app.use("/api/widgets", widgetsRoutes(dbHelpers));
+// app.use("/api/maps", mapsRoutes(dbHelpers));
 
 // Note: mount other resources here, using the same pattern above
 
